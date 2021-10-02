@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="InputModels\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\AdminPanelService.Service\AdminPanelService.Service.csproj" />
   </ItemGroup>
 
