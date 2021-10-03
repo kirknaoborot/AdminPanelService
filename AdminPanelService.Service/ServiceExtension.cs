@@ -9,11 +9,8 @@ namespace AdminPanelService.Service
 {
 	public static class ServiceExtension
 	{
-		public static void AddService(this IServiceCollection services, IConfiguration configuration)
+		public static void AddService(this IServiceCollection services)
 		{
-			services.AddDbContext<AdminPanelContext>(options =>
-			options.UseSqlServer(configuration.GetConnectionString("AdminPanelContext")));
-
             services.AddTransient<IReceptionService, ReceptionService>();
 		}
 	}

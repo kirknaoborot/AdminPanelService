@@ -1,6 +1,10 @@
+using AdminPanelService.Data.Context;
+using AdminPanelService.Rest.Middleware;
 using AdminPanelService.Service;
+using AdminPanelService.Service.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,7 +25,9 @@ namespace AdminPanelService.Rest
         {
             services.AddControllers();
             services.AddSwaggerGen();
-            services.AddService(Configuration);
+            services.AddDbContext<AdminPanelContext>(options => options.UseSqlServer(Configuration.GetConnectionString("AdminPanelContext")));
+            services.AddService();
+            services.Configure<Email>(options => Configuration.GetSection("EmailSettings").Bind(options));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -43,6 +49,8 @@ namespace AdminPanelService.Rest
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
