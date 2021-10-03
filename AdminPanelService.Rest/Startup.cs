@@ -8,7 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace AdminPanelService.Rest
 {
@@ -24,7 +26,13 @@ namespace AdminPanelService.Rest
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
+
             services.AddDbContext<AdminPanelContext>(options => options.UseSqlServer(Configuration.GetConnectionString("AdminPanelContext")));
             services.AddService();
             services.Configure<Email>(options => Configuration.GetSection("EmailSettings").Bind(options));
@@ -44,18 +52,18 @@ namespace AdminPanelService.Rest
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware<ExceptionMiddleware>();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
 
-            app.UseMiddleware<ExceptionMiddleware>();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });
+            });         
         }
     }
 }

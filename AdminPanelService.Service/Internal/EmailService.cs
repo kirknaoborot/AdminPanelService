@@ -1,4 +1,5 @@
-﻿using AdminPanelService.Service.Settings;
+﻿using AdminPanelService.Service.Interfaces;
+using AdminPanelService.Service.Settings;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AdminPanelService.Service.Internal
 {
-    internal class EmailService
+    internal class EmailService : IEmailService
     {
         private Email _emailSettings;
 

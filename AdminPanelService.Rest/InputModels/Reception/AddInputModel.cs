@@ -8,6 +8,7 @@ namespace AdminPanelService.Rest.InputModels.Reception
         /// Название приемной
         /// </summary>
         [Required]
+        [RegularExpression("^[А-Яа-я ]+$", ErrorMessage = "Имя должно состоять из Кириллицы")]
         public string Name { get; set; }
     }
 }

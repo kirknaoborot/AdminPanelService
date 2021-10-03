@@ -12,6 +12,7 @@ namespace AdminPanelService.Service
 		public static void AddService(this IServiceCollection services)
 		{
             services.AddTransient<IReceptionService, ReceptionService>();
+			services.AddTransient<IEmailService, EmailService>();
 		}
 	}
 }

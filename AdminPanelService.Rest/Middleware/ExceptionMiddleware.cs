@@ -1,6 +1,5 @@
 ﻿using AdminPanelService.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -18,7 +17,7 @@ namespace AdminPanelService.Rest.Middleware
             _emailService = emailService;
         }
 
-        public async Task InvoceAsync(HttpContext httpContext)
+        public async Task InvokeAsync(HttpContext httpContext)
         {
             try
             {
@@ -34,6 +33,7 @@ namespace AdminPanelService.Rest.Middleware
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
             await _emailService.SendEmailAsync("", exception.ToString(), "Ошибка сервиса");
 
         }
