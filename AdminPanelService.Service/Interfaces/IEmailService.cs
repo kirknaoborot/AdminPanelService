@@ -2,7 +2,7 @@
 
 namespace AdminPanelService.Service.Interfaces
 {
-    interface IEmailService
+    public interface IEmailService
     {
         Task SendEmailAsync(string toEmail, string message, string subject);
     }

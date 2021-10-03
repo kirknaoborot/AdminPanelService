@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AdminPanelService.Service.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
@@ -10,12 +11,11 @@ namespace AdminPanelService.Rest.Middleware
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger _logger;
-
-        public ExceptionMiddleware(RequestDelegate next, ILogger logger)
+        private readonly IEmailService _emailService;
+        public ExceptionMiddleware(RequestDelegate next, IEmailService emailService)
         {
             _next = next;
-            _logger = logger;
+            _emailService = emailService;
         }
 
         public async Task InvoceAsync(HttpContext httpContext)
@@ -26,7 +26,6 @@ namespace AdminPanelService.Rest.Middleware
             }
             catch(Exception ex)
             {
-                _logger.LogError($"Something went wrong: {ex}");
                 await HandleExceptionAsync(httpContext, ex);
             }
         }
@@ -35,11 +34,8 @@ namespace AdminPanelService.Rest.Middleware
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            await context.Response.WriteAsync(new ErrorDetails()
-            {
-                StatusCode = context.Response.StatusCode,
-                Message = "Internal Server Error from the custom middleware."
-            }.ToString());
+            await _emailService.SendEmailAsync("", exception.ToString(), "Ошибка сервиса");
+
         }
     }
 
