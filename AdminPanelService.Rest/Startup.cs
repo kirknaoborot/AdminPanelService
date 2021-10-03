@@ -20,11 +20,19 @@ namespace AdminPanelService.Rest
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSwaggerGen();
             services.AddService(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Reception Api");
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

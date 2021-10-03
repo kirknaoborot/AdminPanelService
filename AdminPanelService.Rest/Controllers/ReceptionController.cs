@@ -3,6 +3,7 @@ using AdminPanelService.Rest.InputModels.Reception;
 using AdminPanelService.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AdminPanelService.Rest.Controllers
@@ -18,14 +19,26 @@ namespace AdminPanelService.Rest.Controllers
             _receptionService = receptionService;
         }
 
+        /// <summary>
+        /// Получение списка интегрированных приемных
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ReceptionModel>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Get()
         {
-            return Ok();
+
+            var result = _receptionService.GetReceptions();
+
+            return Ok(result);
         }
 
+        /// <summary>
+        /// Добавление новой интегрируемой приемной
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ReceptionModel))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
