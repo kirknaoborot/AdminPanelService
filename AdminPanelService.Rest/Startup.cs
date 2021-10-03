@@ -52,6 +52,7 @@ namespace AdminPanelService.Rest
                 app.UseDeveloperExceptionPage();
             }
 
+
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();

@@ -19,25 +19,35 @@ namespace AdminPanelService.Service.Internal
             _adminPanelContext = adminPanelContext;
         }
 
-        public async Task<IEnumerable<ReceptionModel>> GetReceptions()
+        #region public methods
+
+        public async Task<IReadOnlyList<ReceptionModel>> GetReceptions()
         {
-            return await _adminPanelContext.Receptions
+          var receptions = await _adminPanelContext.Receptions
+                .Where(i => i.IsActive)
                 .Select(_ => new ReceptionModel
-            {
-                Id = _.Id,
-                Name = _.Name,
-                CreateDate =_.CreateDate
-            })
+                {
+                    Id = _.Id,
+                    Name = _.Name,
+                    CreateDate = _.CreateDate
+                })
                 .ToListAsync();
+
+            return receptions;
         }
 
         public async Task<ReceptionModel> Add(string name)
         {
+            if (await CheckForDuplicatesName(name))
+                throw new InvalidOperationException($"Приемная с именем {name} уже существует");
+
             var reception = new Reception
             {
                 Id = Guid.NewGuid(),
                 Name = name,
-                CreateDate = DateTime.Now
+                CreateDate = DateTime.Now,
+                EditDate = DateTime.Now,
+                IsActive = true
             };
 
             await _adminPanelContext.AddAsync(reception);
@@ -46,7 +56,45 @@ namespace AdminPanelService.Service.Internal
             return MapReceptionModelFromDomain(reception);
         }
 
+        public async Task<ReceptionModel> Update(Guid Id, string name)
+        {
+            var reception = await _adminPanelContext.Receptions.FirstOrDefaultAsync(i => i.Id == Id);
 
+            if (reception == null)
+                throw new InvalidOperationException($"Приемная с идентификатором {Id} не найдена");
+
+            if (await CheckForDuplicatesName(name))
+                throw new InvalidOperationException($"Приемная с именем {name} уже существует");
+
+            reception.Name = name;
+            reception.EditDate = DateTime.Now;
+
+            await _adminPanelContext.SaveChangesAsync();
+
+            return MapReceptionModelFromDomain(reception);
+        }
+
+        public async Task<ReceptionModel> Delete(Guid Id)
+        {
+            var reception = await _adminPanelContext.Receptions.FirstOrDefaultAsync(i => i.Id == Id);
+
+            if (reception == null)
+                throw new InvalidOperationException($"Приемная с идентификатором {Id} не найдена");
+
+            if (reception.IsActive == true)
+            {
+                reception.IsActive = false;
+                reception.EditDate = DateTime.Now;
+
+                await _adminPanelContext.SaveChangesAsync();
+            }
+
+            return MapReceptionModelFromDomain(reception);
+        }
+
+        #endregion
+
+        #region private methods
         private ReceptionModel MapReceptionModelFromDomain(Reception reception)
         {
             return new ReceptionModel
@@ -56,5 +104,13 @@ namespace AdminPanelService.Service.Internal
                 CreateDate = reception.CreateDate
             };
         }
+
+        private async Task<bool> CheckForDuplicatesName(string name)
+        {
+            return (await _adminPanelContext.Receptions
+                .AnyAsync(i => i.Name.Trim().ToLower() == name.Trim().ToLower()));
+        }
+
+        #endregion
     }
 }

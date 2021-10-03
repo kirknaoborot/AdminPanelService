@@ -17,7 +17,29 @@
             <param name="model"></param>
             <returns></returns>
         </member>
+        <member name="M:AdminPanelService.Rest.Controllers.ReceptionController.Update(AdminPanelService.Rest.InputModels.Reception.UpdateInputModel)">
+            <summary>
+            Метод обновления названия приемной
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
         <member name="P:AdminPanelService.Rest.InputModels.Reception.AddInputModel.Name">
+            <summary>
+            Название приемной
+            </summary>
+        </member>
+        <member name="P:AdminPanelService.Rest.InputModels.Reception.DeleteInputModel.Id">
+            <summary>
+            Идентификатор приемной
+            </summary>
+        </member>
+        <member name="P:AdminPanelService.Rest.InputModels.Reception.UpdateInputModel.Id">
+            <summary>
+            Идентификатор приемной
+            </summary>
+        </member>
+        <member name="P:AdminPanelService.Rest.InputModels.Reception.UpdateInputModel.Name">
             <summary>
             Название приемной
             </summary>
